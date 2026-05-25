@@ -43,7 +43,7 @@
 
         /* ===== HERO SECTION ===== */
         .hero-section {
-            position: relative; width: 100vw; height: 100vh;
+            position: relative; width: 100vw; min-height: 100vh; 
             background-color: #0f172a;
             background-image: 
                 radial-gradient(at 80% 0%, rgba(59, 130, 246, 0.25) 0px, transparent 50%),
@@ -66,11 +66,13 @@
         }
         .navbar-landing b { font-size: 24px; display: flex; align-items: center; gap: 10px;}
         .navbar-landing b i { color: var(--accent); }
+        
+        .nav-right { display: flex; align-items: center; gap: 30px; }
         .menu { display: flex; gap: 30px; align-items: center;}
         .menu a { color: white; text-decoration: none; font-weight: 500; transition: color 0.3s; font-size: 14px; }
         .menu a:hover { color: var(--accent-hover); }
         
-        .btn-login-nav { background: var(--accent); color: white !important; padding: 8px 20px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: 0.3s;}
+        .btn-login-nav { background: var(--accent); color: white !important; padding: 8px 20px; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: 0.3s; white-space: nowrap;}
         .btn-login-nav:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);}
 
         .content { display: flex; align-items: center; justify-content: space-between; padding: 0 10%; flex: 1; z-index: 10; margin-top: 60px; }
@@ -106,7 +108,6 @@
         /* ===== MODAL LOGIN / REGISTER ===== */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            /* Latar belakang dipergelap untuk memblokir akses */
             background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(15px);
             z-index: 2000; display: none; align-items: center; justify-content: center;
             opacity: 0; transition: opacity 0.4s ease;
@@ -114,9 +115,10 @@
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal-box {
             background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 20px; width: 400px; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            border-radius: 20px; width: 400px; max-width: 90%; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
             position: relative; overflow: hidden; color: white; font-family: 'Inter', sans-serif;
             transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-sizing: border-box;
         }
         .modal-overlay.active .modal-box { transform: scale(1); }
         
@@ -190,7 +192,7 @@
         .stat-card h3 { font-size: 36px; color: var(--text-dark); margin: 0 0 5px 0; font-family: 'Poppins', sans-serif; }
         .stat-card p { font-size: 15px; color: #64748b; margin: 0; font-weight: 500; }
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-bottom: 30px; }
-        .card-box { background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.03); text-align: left; transition: box-shadow 0.3s; }
+        .card-box { background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.03); text-align: left; transition: box-shadow 0.3s; overflow: hidden;}
         .card-box:hover { box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
         .card-box h3 { font-family: 'Poppins', sans-serif; color: var(--text-dark); margin-top: 0; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 20px; }
         .data-table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -235,7 +237,6 @@
         .footer-contact i { color: var(--accent); margin-top: 4px; }
         .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; text-align: center; color: #64748b; font-size: 14px; }
 
-
         /* =========================================
            WEBGIS MAP APPLICATION (REVISED SIDEBAR)
            ========================================= */
@@ -279,8 +280,8 @@
 
         /* ===== SIDEBAR KIRI (SISTEM KENDALI PETA) ===== */
         .sidebar { 
-            position: absolute; top: 85px; /* Diturunkan untuk memberi ruang bagi Search Box */
-            left: 20px; width: 300px; /* Lebar diperkecil dari 340px */
+            position: absolute; top: 85px; 
+            left: 20px; width: 300px; 
             max-height: calc(100vh - 105px); 
             background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); 
             border-radius: 12px; z-index: 1000; display: flex; flex-direction: column; color: var(--text-main); 
@@ -288,7 +289,7 @@
             transition: max-height 0.3s ease, height 0.3s ease;
         }
         
-        .sidebar.collapsed { max-height: 55px; } /* Kondisi saat dicollapse */
+        .sidebar.collapsed { max-height: 55px; }
         .sidebar.collapsed .sidebar-content { display: none; }
         .sidebar.collapsed .sidebar-header .toggle-sidebar { transform: rotate(180deg); }
 
@@ -381,13 +382,34 @@
             border-radius: 12px; z-index: 1000; padding: 15px;
             color: #e5e5e5; font-family: 'Inter', sans-serif; font-size: 12px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(16px);
-            min-width: 200px; max-height: 40vh; overflow-y: auto;
-            display: flex; flex-direction: column; gap: 15px;
+            min-width: 200px;
+            display: flex; flex-direction: column;
             transition: opacity 0.3s ease-in-out;
         }
-        .map-legend-right::-webkit-scrollbar { width: 4px; }
-        .map-legend-right::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         
+        .legend-main-header {
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 10px;
+        }
+        .legend-content-wrapper {
+            display: flex; flex-direction: column; gap: 15px;
+            max-height: 40vh; overflow-y: auto;
+            transition: max-height 0.3s ease, margin 0.3s ease;
+        }
+        .legend-content-wrapper::-webkit-scrollbar { width: 4px; }
+        .legend-content-wrapper::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        /* Collapse Rules for Legend */
+        .map-legend-right.collapsed .legend-content-wrapper {
+            max-height: 0; overflow: hidden; margin-top: 0; margin-bottom: 0;
+        }
+        .map-legend-right.collapsed .legend-main-header {
+            border-bottom: none; padding-bottom: 0; margin-bottom: 0;
+        }
+        .map-legend-right.collapsed .toggle-legend-icon {
+            transform: rotate(180deg);
+        }
+
         .legend-section { display: none; }
         .legend-section.active { display: block; animation: fadeIn 0.4s ease-out; }
         .legend-title { font-family: 'Poppins', sans-serif; font-weight: 600; margin-bottom: 10px; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px;}
@@ -404,14 +426,36 @@
         .leaflet-popup-content-wrapper { background: rgba(20, 26, 38, 0.95); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);}
         .leaflet-popup-tip { background: rgba(20, 26, 38, 0.95); }
 
+        /* =========================================
+           MEDIA QUERIES (OPTIMALISASI MOBILE/HP)
+           ========================================= */
         @media (max-width: 992px) {
-            .profil-grid, .geo-grid { grid-template-columns: 1fr; }
+            .profil-grid, .geo-grid, .footer-grid { grid-template-columns: 1fr; gap: 40px;}
             .menu { display: none; }
             .map-toolbar-right { display: none; } 
             .spatial-search-box { width: 90%; left: 5%; top: 15px; }
             .sidebar { width: 90%; left: 5%; top: 70px; height: auto; max-height: 40vh; }
             .leaflet-left { margin-left: 10px !important; margin-top: 60px !important;}
             .map-legend-right { bottom: 80px; right: 20px; max-width: 150px; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section { min-height: 100vh; height: auto; padding-bottom: 50px; }
+            .content { flex-direction: column; text-align: center; margin-top: 100px; padding: 0 5%; gap: 40px; }
+            .hero-content-box { padding: 30px 20px; }
+            .hero-content-box h1 { font-size: 32px; }
+            .btn-group { justify-content: center; }
+            .image img { width: 100%; max-width: 320px; }
+            .profil-text h2 { font-size: 28px; }
+            .profil-text .line-left { margin: 0 auto 25px auto; }
+            .profil-text p { text-align: center; }
+            .navbar-landing { padding: 15px 20px; }
+            .btn-login-nav { padding: 8px 12px; font-size: 12px; }
+            .navbar-landing b { font-size: 18px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .data-table { display: block; overflow-x: auto; white-space: nowrap; } 
+            .section-container { padding: 60px 5%; }
+            .modal-box { padding: 30px 20px; }
         }
     </style>
 </head>
@@ -422,13 +466,15 @@
         <div class="hero-section" id="hero">
             <div class="navbar-landing" id="main-nav" data-aos="fade-down">
                 <div><b><i class="fa-solid fa-map-location-dot"></i> GeoKrajan</b></div>
-                <div class="menu">
-                    <a href="#hero">Beranda</a>
-                    <a href="#profil">Profil & Sejarah</a>
-                    <a href="#geografis">Geografis</a>
-                    <a href="#monografi">Monografi</a>
-                    <a href="#potensi">Potensi</a>
-                    <button class="btn-login-nav" onclick="openLoginModal()"><i class="fa-solid fa-user-circle"></i> Masuk / Daftar</button>
+                <div class="nav-right">
+                    <div class="menu">
+                        <a href="#hero">Beranda</a>
+                        <a href="#profil">Profil & Sejarah</a>
+                        <a href="#geografis">Geografis</a>
+                        <a href="#monografi">Monografi</a>
+                        <a href="#potensi">Potensi</a>
+                    </div>
+                    <button class="btn-login-nav" id="nav-btn-login" onclick="openLoginModal()"><i class="fa-solid fa-user-circle"></i> Masuk / Daftar</button>
                 </div>
             </div>
             
@@ -634,6 +680,7 @@
 
     <div class="modal-overlay" id="authModal">
         <div class="modal-box">
+            
             <div class="modal-header">
                 <i class="fa-solid fa-user-shield"></i>
                 <h2 id="modalTitle">Selamat Datang</h2>
@@ -645,10 +692,10 @@
                 <button id="btn-tab-register" onclick="switchAuthTab('register')">Daftar</button>
             </div>
 
-            <form id="form-login" class="auth-form active" onsubmit="prosesAuth(event, 'Berhasil masuk ke sistem')">
+            <form id="form-login" class="auth-form active" onsubmit="prosesAuth(event, 'login')">
                 <div class="input-group">
                     <i class="fa-solid fa-envelope"></i>
-                    <input type="email" placeholder="Alamat Email" required>
+                    <input type="email" id="login-email" placeholder="Alamat Email" required>
                 </div>
                 <div class="input-group">
                     <i class="fa-solid fa-lock"></i>
@@ -657,10 +704,10 @@
                 <button type="submit" class="btn-auth-submit">Masuk ke Sistem</button>
             </form>
 
-            <form id="form-register" class="auth-form" onsubmit="prosesAuth(event, 'Akun berhasil dibuat. Selamat datang!')">
+            <form id="form-register" class="auth-form" onsubmit="prosesAuth(event, 'register')">
                 <div class="input-group">
                     <i class="fa-solid fa-user"></i>
-                    <input type="text" placeholder="Nama Lengkap" required>
+                    <input type="text" id="reg-nama" placeholder="Nama Lengkap" required>
                 </div>
                 <div class="input-group">
                     <i class="fa-solid fa-envelope"></i>
@@ -792,40 +839,42 @@
                 <i class="fa-solid fa-chevron-up toggle-icon"></i>
             </div>
             <ul class="toolbar-list">
-                <li class="tool-item" onclick="alert('Brankas Elektronik: Dalam Pengembangan')"><i class="fa-solid fa-vault"></i> Brankas Elektronik</li>
-                <li class="tool-item" onclick="alert('Koleksi: Dalam Pengembangan')"><i class="fa-regular fa-bookmark"></i> Koleksi</li>
-                
                 <li class="tool-item" id="btn-ukur" onclick="toggleDraw()"><i class="fa-solid fa-ruler-combined"></i> Pengukuran Jarak/Luas</li>
                 <li class="tool-item" id="btn-draw" onclick="toggleDraw()"><i class="fa-solid fa-draw-polygon"></i> Digitasi Polygon</li>
-                
-                <li class="tool-item" onclick="unduhHasilDigitasi()" style="color:#10b981;"><i class="fa-solid fa-download"></i> Unduh Hasil Digitasi</li>
-
-                <li class="tool-item" onclick="alert('Analisis Isochrone memerlukan API Traffic pihak ketiga.')"><i class="fa-regular fa-map"></i> Isochrone</li>
-                <li class="tool-item" onclick="kembaliKeBeranda()"><i class="fa-solid fa-chart-pie"></i> Infografis Data</li>
-                <li class="tool-item" onclick="alert('Swaplotting: Dalam Pengembangan')"><i class="fa-solid fa-object-ungroup"></i> Swaplotting</li>
+                <li class="tool-item" onclick="unduhHasilDigitasi()"><i class="fa-solid fa-download"></i> Unduh Hasil Digitasi</li>
+                <li class="tool-item" onclick="bukaInfografis()"><i class="fa-solid fa-chart-pie"></i> Infografis Data</li>
             </ul>
         </div>
 
         <div class="map-legend-right" id="map-legend">
-            <div id="leg-text-bidang" class="legend-section active">
-                <div class="legend-title">Legenda Bidang Tanah</div>
-                <div class="legend-item"><div class="color-box" style="background:#e11d48;"></div><span>Hak Guna Bangunan</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#86efac;"></div><span>Hak Milik</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#fcd34d;"></div><span>Hak Pakai</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#f97316;"></div><span>Hak Wakaf</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#3b82f6;"></div><span>Kosong</span></div>
+            <div class="legend-main-header" onclick="toggleLegend()">
+                <span style="font-family: 'Poppins', sans-serif; font-weight: 600; color: white;">
+                    <i class="fa-solid fa-list-ul" style="color:var(--accent); margin-right:8px;"></i> Legenda Peta
+                </span>
+                <i class="fa-solid fa-chevron-up toggle-legend-icon" style="color: #94a3b8; transition: transform 0.3s;"></i>
             </div>
+            
+            <div class="legend-content-wrapper" id="legend-content-wrapper">
+                <div id="leg-text-bidang" class="legend-section active">
+                    <div class="legend-title">Legenda Bidang Tanah</div>
+                    <div class="legend-item"><div class="color-box" style="background:#e11d48;"></div><span>Hak Guna Bangunan</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#86efac;"></div><span>Hak Milik</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#fcd34d;"></div><span>Hak Pakai</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#f97316;"></div><span>Hak Wakaf</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#3b82f6;"></div><span>Kosong</span></div>
+                </div>
 
-            <div id="leg-text-penutup" class="legend-section active">
-                <div class="legend-title">Legenda Penutup Lahan</div>
-                <div class="legend-item"><div class="color-box" style="background:#fca5a5;"></div><span>Bangunan Hunian</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#d8b4fe;"></div><span>Bangunan Industri</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#6ee7b7;"></div><span>Bangunan Pendidikan</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#fde047;"></div><span>Bangunan Peribadatan</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#cbd5e1;"></div><span>Bangunan Perkantoran</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#4ade80;"></div><span>Sawah / Pertanian Basah</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#14b8a6;"></div><span>Tegalan / Ladang</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#93c5fd;"></div><span>Badan Air / Sungai</span></div>
+                <div id="leg-text-penutup" class="legend-section active">
+                    <div class="legend-title">Legenda Penutup Lahan</div>
+                    <div class="legend-item"><div class="color-box" style="background:#fca5a5;"></div><span>Bangunan Hunian</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#d8b4fe;"></div><span>Bangunan Industri</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#6ee7b7;"></div><span>Bangunan Pendidikan</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#fde047;"></div><span>Bangunan Peribadatan</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#cbd5e1;"></div><span>Bangunan Perkantoran</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#4ade80;"></div><span>Sawah / Pertanian Basah</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#14b8a6;"></div><span>Tegalan / Ladang</span></div>
+                    <div class="legend-item"><div class="color-box" style="background:#93c5fd;"></div><span>Badan Air / Sungai</span></div>
+                </div>
             </div>
         </div>
 
@@ -886,16 +935,30 @@
             }
         }
 
-        function prosesAuth(event, pesan) {
+        // === FUNGSI MENGGANTI NAMA DI NAVBAR SETELAH LOGIN/REGISTER ===
+        function prosesAuth(event, type) {
             event.preventDefault();
-            alert(pesan);
+            let userName = "User";
+
+            if (type === 'login') {
+                let email = document.getElementById('login-email').value;
+                // Mengambil kata sebelum tanda @ sebagai nama (contoh: budi@gmail.com -> budi)
+                userName = email.split('@')[0];
+                alert('Berhasil masuk ke sistem');
+            } else if (type === 'register') {
+                userName = document.getElementById('reg-nama').value;
+                alert('Akun berhasil dibuat. Selamat datang!');
+            }
+
+            // Ubah tombol di navbar
+            document.getElementById('nav-btn-login').innerHTML = `<i class="fa-solid fa-user-circle"></i> Hai, ${userName}`;
             closeLoginModal();
         }
 
         function masukSebagaiTamu() {
+            // Ubah tombol di navbar menjadi Tamu
+            document.getElementById('nav-btn-login').innerHTML = `<i class="fa-solid fa-user-circle"></i> Tamu`;
             closeLoginModal();
-            // Optional: langsung buka peta jika mau, atau biarkan di halaman landing.
-            // masuk(); 
         }
 
         // =========================================
@@ -1013,10 +1076,27 @@
             }, 500); 
         }
 
-        // Fungsi Penciutan Sidebar Utama (Tugas 3)
+        // Fungsi Tombol Infografis (Tugas 3)
+        function bukaInfografis() {
+            kembaliKeBeranda();
+            setTimeout(() => {
+                const profilSection = document.getElementById("profil");
+                if (profilSection) {
+                    profilSection.scrollIntoView({ behavior: "smooth" });
+                }
+            }, 600); // 600ms memberi waktu transisi peta tertutup sempurna
+        }
+
+        // Fungsi Penciutan Sidebar Utama 
         function toggleSidebarUtama() {
             const sidebar = document.getElementById('sidebar-kendali');
             sidebar.classList.toggle('collapsed');
+        }
+
+        // Fungsi Penciutan Legenda (Tugas 2)
+        function toggleLegend() {
+            const legend = document.getElementById('map-legend');
+            legend.classList.toggle('collapsed');
         }
 
         // ==============================
@@ -1270,7 +1350,7 @@
         }
 
         // ===========================================
-        // === UNDUH HASIL DIGITASI (EKSPOR KML/SHP) =
+        // === UNDUH HASIL DIGITASI (EKSPOR GEOJSON) =
         // ===========================================
         function unduhHasilDigitasi() {
             if (!drawnItems || drawnItems.getLayers().length === 0) {
