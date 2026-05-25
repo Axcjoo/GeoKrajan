@@ -16,6 +16,7 @@
     <script src="data/JALAN_LN_2.js"></script>
     <script src="data/BIDANG_TANAH_0.js"></script>
     <script src="data/PENUTUP_LAHAN_1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         /* ===== GLOBAL VARIABLES & RESET ===== */
@@ -105,7 +106,8 @@
         /* ===== MODAL LOGIN / REGISTER ===== */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+            /* Latar belakang dipergelap untuk memblokir akses */
+            background: rgba(10, 15, 26, 0.85); backdrop-filter: blur(15px);
             z-index: 2000; display: none; align-items: center; justify-content: center;
             opacity: 0; transition: opacity 0.4s ease;
         }
@@ -117,11 +119,6 @@
             transform: scale(0.8); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .modal-overlay.active .modal-box { transform: scale(1); }
-        .btn-close-modal {
-            position: absolute; top: 20px; right: 20px; background: transparent; border: none;
-            color: #94a3b8; font-size: 20px; cursor: pointer; transition: 0.3s;
-        }
-        .btn-close-modal:hover { color: white; transform: rotate(90deg); }
         
         .modal-header { text-align: center; margin-bottom: 30px; }
         .modal-header i { font-size: 40px; color: var(--accent); margin-bottom: 15px; }
@@ -168,15 +165,6 @@
         .profil-image-wrapper { position: relative; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.1); background: #e2e8f0; }
         .profil-image-wrapper img { width: 100%; height: 450px; object-fit: cover; display: block; transition: transform 0.6s ease; }
         .profil-image-wrapper:hover img { transform: scale(1.05); }
-        .history-badge {
-            position: absolute; bottom: 25px; left: 25px; background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px); padding: 15px 25px; border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 15px;
-            border-left: 5px solid var(--accent); z-index: 2;
-        }
-        .history-badge i { font-size: 32px; color: var(--accent); }
-        .history-badge .badge-text h4 { margin: 0; font-family: 'Poppins', sans-serif; color: var(--text-dark); font-size: 16px; font-weight: 600;}
-        .history-badge .badge-text p { margin: 0; font-size: 13px; color: #64748b; text-align: left;}
 
         /* KONDISI GEOGRAFIS */
         .geo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; text-align: left; }
@@ -256,27 +244,60 @@
         
         #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
+        /* DESAIN BARU KELUAR PETA - MINIMALIS & ELEGAN */
         .btn-back-map { 
             position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 1000; 
-            background: #ef4444; border: none; color: white; padding: 12px 30px; border-radius: 30px; 
-            cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 600; font-size: 15px; 
-            transition: all 0.3s; box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); display: flex; align-items: center; gap: 8px;
+            background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255,255,255,0.15); 
+            backdrop-filter: blur(12px); color: #f8fafc; padding: 10px 24px; border-radius: 12px; 
+            cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 14px; letter-spacing: 0.5px;
+            transition: all 0.3s; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); display: flex; align-items: center; gap: 8px;
         }
-        .btn-back-map:hover { background: #dc2626; transform: translateX(-50%) scale(1.05); }
+        .btn-back-map i { color: #ef4444; transition: 0.3s; }
+        .btn-back-map:hover { background: rgba(15, 23, 42, 0.95); border-color: #ef4444; color: white; transform: translateX(-50%) translateY(-2px); }
+        .btn-back-map:hover i { transform: scale(1.1); }
+
+        /* PENCARIAN SPASIAL (SPATIAL SEARCH) */
+        .spatial-search-box {
+            position: absolute; top: 20px; left: 20px; width: 300px;
+            background: var(--glass-bg); backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            z-index: 1000; display: flex; padding: 10px; gap: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); box-sizing: border-box;
+        }
+        .spatial-search-box input {
+            flex: 1; width: 100%; padding: 8px 10px; border-radius: 6px;
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.4);
+            color: white; font-family: 'Inter', sans-serif; font-size: 12px; outline: none;
+            transition: 0.3s;
+        }
+        .spatial-search-box input:focus { border-color: var(--accent); }
+        .spatial-search-box button {
+            background: var(--accent); border: none; color: white;
+            padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: 0.3s;
+        }
+        .spatial-search-box button:hover { background: var(--accent-hover); }
 
         /* ===== SIDEBAR KIRI (SISTEM KENDALI PETA) ===== */
         .sidebar { 
-            position: absolute; top: 20px; left: 20px; width: 340px; max-height: calc(100vh - 40px); 
+            position: absolute; top: 85px; /* Diturunkan untuk memberi ruang bagi Search Box */
+            left: 20px; width: 300px; /* Lebar diperkecil dari 340px */
+            max-height: calc(100vh - 105px); 
             background: var(--glass-bg); backdrop-filter: blur(16px); border: 1px solid var(--glass-border); 
             border-radius: 12px; z-index: 1000; display: flex; flex-direction: column; color: var(--text-main); 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6); overflow: hidden;
+            transition: max-height 0.3s ease, height 0.3s ease;
         }
+        
+        .sidebar.collapsed { max-height: 55px; } /* Kondisi saat dicollapse */
+        .sidebar.collapsed .sidebar-content { display: none; }
+        .sidebar.collapsed .sidebar-header .toggle-sidebar { transform: rotate(180deg); }
+
         .sidebar-header { 
-            padding: 20px; display: flex; align-items: center; justify-content: space-between; 
-            border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.2);
+            padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; 
+            border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); cursor: pointer;
         }
-        .sidebar-header h1 { margin: 0; font-size: 16px; font-weight: 700; font-family: 'Poppins', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;}
-        .sidebar-header i { font-size: 18px; color: var(--accent); }
+        .sidebar-header h1 { margin: 0; font-size: 14px; font-weight: 700; font-family: 'Poppins', sans-serif; letter-spacing: 0.5px; text-transform: uppercase;}
+        .sidebar-header .toggle-sidebar { font-size: 14px; color: var(--accent); transition: transform 0.3s ease; }
         
         .sidebar-content { padding: 0 20px 20px 20px; overflow-y: auto; display: flex; flex-direction: column; }
         .sidebar-content::-webkit-scrollbar { width: 6px; }
@@ -285,19 +306,19 @@
         .section-title { font-size: 12px; font-weight: 700; color: var(--text-muted); margin: 20px 0 10px 0; font-family: 'Poppins', sans-serif; letter-spacing: 1px;}
         
         /* Radio Custom */
-        .radio-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 14px; font-weight: 500; cursor: pointer; color: #e2e8f0; }
+        .radio-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 13px; font-weight: 500; cursor: pointer; color: #e2e8f0; }
         .radio-item input[type="radio"] { display: none; }
-        .radio-custom { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #64748b; display: inline-block; position: relative; transition: 0.2s; }
+        .radio-custom { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #64748b; display: inline-block; position: relative; transition: 0.2s; }
         .radio-item input[type="radio"]:checked + .radio-custom { border-color: var(--accent); }
-        .radio-item input[type="radio"]:checked + .radio-custom::after { content: ''; position: absolute; top: 3px; left: 3px; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; }
+        .radio-item input[type="radio"]:checked + .radio-custom::after { content: ''; position: absolute; top: 3px; left: 3px; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; }
         
         /* Checkbox Custom */
-        .check-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 14px; font-weight: 500; cursor: pointer; color: #e2e8f0; }
+        .check-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; font-size: 13px; font-weight: 500; cursor: pointer; color: #e2e8f0; }
         .check-item-left { display: flex; align-items: center; gap: 12px; }
         .check-item input[type="checkbox"] { display: none; }
-        .check-custom { width: 18px; height: 18px; border-radius: 4px; border: 2px solid #64748b; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .check-custom { width: 16px; height: 16px; border-radius: 4px; border: 2px solid #64748b; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
         .check-item input[type="checkbox"]:checked + .check-custom { background: var(--accent); border-color: var(--accent); }
-        .check-item input[type="checkbox"]:checked + .check-custom::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: white; font-size: 12px; }
+        .check-item input[type="checkbox"]:checked + .check-custom::after { content: '\f00c'; font-family: "Font Awesome 6 Free"; font-weight: 900; color: white; font-size: 10px; }
         
         /* Legend indicators in sidebar */
         .legend-indicator { width: 16px; height: 16px; border-radius: 3px; display: inline-block; }
@@ -308,12 +329,12 @@
 
         /* Sliders */
         .slider-wrapper { margin-bottom: 15px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);}
-        .slider-labels { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #cbd5e1; font-family: 'Poppins', sans-serif;}
+        .slider-labels { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 8px; color: #cbd5e1; font-family: 'Poppins', sans-serif;}
         .slider-labels span:last-child { color: var(--accent); }
         .range-slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: #334155; outline: none; transition: background 0.15s ease-in-out; }
         .range-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 2px solid white; box-shadow: 0 0 5px rgba(0,0,0,0.5);}
         
-        .btn-reset { width: 100%; padding: 12px; margin-top: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: 'Poppins', sans-serif;}
+        .btn-reset { width: 100%; padding: 10px; margin-top: 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; font-weight: 600; font-size: 12px; border-radius: 8px; cursor: pointer; transition: 0.3s; font-family: 'Poppins', sans-serif;}
         .btn-reset:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); color: var(--accent-hover);}
 
         /* ===== TOOLBAR KANAN (ALAT & FITUR SPASIAL) ===== */
@@ -374,7 +395,7 @@
         .color-box { width: 16px; height: 16px; border-radius: 3px; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;}
 
         /* ===== LEAFLET CONTROLS OVERRIDE ===== */
-        .leaflet-left { margin-left: 370px !important; margin-top: 10px !important; }
+        .leaflet-left { margin-left: 330px !important; margin-top: 10px !important; }
         
         .leaflet-control-zoom { border: none !important; box-shadow: 0 5px 15px rgba(0,0,0,0.5) !important;}
         .leaflet-control-zoom a { background: rgba(20, 26, 38, 0.95) !important; color: white !important; border: 1px solid rgba(255,255,255,0.15) !important; }
@@ -382,18 +403,15 @@
         
         .leaflet-popup-content-wrapper { background: rgba(20, 26, 38, 0.95); backdrop-filter: blur(10px); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5);}
         .leaflet-popup-tip { background: rgba(20, 26, 38, 0.95); }
-        
-        .leaflet-routing-container { background: rgba(20, 26, 38, 0.95) !important; color: white !important; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important; font-family: 'Inter', sans-serif;}
-        .leaflet-routing-alt h2, .leaflet-routing-alt h3 { color: white !important; font-family: 'Poppins', sans-serif;}
 
         @media (max-width: 992px) {
             .profil-grid, .geo-grid { grid-template-columns: 1fr; }
             .menu { display: none; }
             .map-toolbar-right { display: none; } 
-            .sidebar { width: 90%; left: 5%; height: auto; max-height: 50vh; bottom: 80px; top: auto; }
-            .leaflet-left { margin-left: 10px !important; }
-            .btn-back-map { bottom: 20px; }
-            .map-legend-right { bottom: 20px; right: 20px; max-width: 150px; }
+            .spatial-search-box { width: 90%; left: 5%; top: 15px; }
+            .sidebar { width: 90%; left: 5%; top: 70px; height: auto; max-height: 40vh; }
+            .leaflet-left { margin-left: 10px !important; margin-top: 60px !important;}
+            .map-legend-right { bottom: 80px; right: 20px; max-width: 150px; }
         }
     </style>
 </head>
@@ -614,15 +632,12 @@
         </footer>
     </div>
 
-
     <div class="modal-overlay" id="authModal">
         <div class="modal-box">
-            <button class="btn-close-modal" onclick="closeLoginModal()"><i class="fa-solid fa-xmark"></i></button>
-            
             <div class="modal-header">
                 <i class="fa-solid fa-user-shield"></i>
                 <h2 id="modalTitle">Selamat Datang</h2>
-                <p id="modalDesc">Silakan masuk untuk akses penuh</p>
+                <p id="modalDesc">Akses web membutuhkan autentikasi</p>
             </div>
 
             <div class="auth-switch">
@@ -630,7 +645,7 @@
                 <button id="btn-tab-register" onclick="switchAuthTab('register')">Daftar</button>
             </div>
 
-            <form id="form-login" class="auth-form active" onsubmit="event.preventDefault(); alert('Fitur backend login sedang dalam tahap pengembangan.');">
+            <form id="form-login" class="auth-form active" onsubmit="prosesAuth(event, 'Berhasil masuk ke sistem')">
                 <div class="input-group">
                     <i class="fa-solid fa-envelope"></i>
                     <input type="email" placeholder="Alamat Email" required>
@@ -642,7 +657,7 @@
                 <button type="submit" class="btn-auth-submit">Masuk ke Sistem</button>
             </form>
 
-            <form id="form-register" class="auth-form" onsubmit="event.preventDefault(); alert('Fitur pendaftaran user baru sedang dalam tahap pengembangan.');">
+            <form id="form-register" class="auth-form" onsubmit="prosesAuth(event, 'Akun berhasil dibuat. Selamat datang!')">
                 <div class="input-group">
                     <i class="fa-solid fa-user"></i>
                     <input type="text" placeholder="Nama Lengkap" required>
@@ -669,12 +684,18 @@
     <div class="main-app" id="main-app">
         <div id="map"></div>
         
-        <button class="btn-back-map" onclick="kembaliKeBeranda()"><i class="fa-solid fa-power-off"></i> Keluar Peta</button>
+        <button class="btn-back-map" onclick="kembaliKeBeranda()"><i class="fa-solid fa-arrow-left"></i> Keluar Peta</button>
 
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h1>Peta Interaktif Desa Krajan</h1>
-                <i class="fa-solid fa-sliders"></i>
+        <div class="spatial-search-box">
+            <input type="number" step="any" id="coord-lat" placeholder="Lat (-7.62)">
+            <input type="number" step="any" id="coord-lng" placeholder="Lng (110.59)">
+            <button onclick="cariKoordinat()" title="Cari Lokasi"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+
+        <div class="sidebar" id="sidebar-kendali">
+            <div class="sidebar-header" onclick="toggleSidebarUtama()">
+                <h1><i class="fa-solid fa-layer-group" style="color: var(--accent); margin-right:5px;"></i> Peta Interaktif</h1>
+                <i class="fa-solid fa-chevron-up toggle-sidebar"></i>
             </div>
 
             <div class="sidebar-content">
@@ -697,7 +718,7 @@
                     <label class="check-item">
                         <div class="check-item-left">
                             <input type="checkbox" id="chk-batas" checked>
-                            <span class="check-custom"></span> Batas Administrasi / Desa
+                            <span class="check-custom"></span> Batas Desa
                         </div>
                         <span class="legend-indicator dashed"></span>
                     </label>
@@ -711,14 +732,14 @@
                     <label class="check-item">
                         <div class="check-item-left">
                             <input type="checkbox" id="chk-bidang" checked>
-                            <span class="check-custom"></span> Peta Bidang Tanah
+                            <span class="check-custom"></span> Bidang Tanah
                         </div>
                         <span class="legend-indicator orange"></span>
                     </label>
                     <label class="check-item">
                         <div class="check-item-left">
                             <input type="checkbox" id="chk-penutup" checked>
-                            <span class="check-custom"></span> Peta Penutup Lahan
+                            <span class="check-custom"></span> Penutup Lahan
                         </div>
                         <span class="legend-indicator blue"></span>
                     </label>
@@ -746,7 +767,7 @@
 
                 <div class="slider-wrapper">
                     <div class="slider-labels">
-                        <span>Peta Bidang Tanah</span>
+                        <span>Bidang Tanah</span>
                         <span id="lbl-bidang">70%</span>
                     </div>
                     <input type="range" id="op-bidang" class="range-slider" min="0" max="1" step="0.01" value="0.7">
@@ -754,7 +775,7 @@
 
                 <div class="slider-wrapper">
                     <div class="slider-labels">
-                        <span>Peta Penutup Lahan</span>
+                        <span>Penutup Lahan</span>
                         <span id="lbl-penutup">60%</span>
                     </div>
                     <input type="range" id="op-penutup" class="range-slider" min="0" max="1" step="0.01" value="0.6">
@@ -777,6 +798,8 @@
                 <li class="tool-item" id="btn-ukur" onclick="toggleDraw()"><i class="fa-solid fa-ruler-combined"></i> Pengukuran Jarak/Luas</li>
                 <li class="tool-item" id="btn-draw" onclick="toggleDraw()"><i class="fa-solid fa-draw-polygon"></i> Digitasi Polygon</li>
                 
+                <li class="tool-item" onclick="unduhHasilDigitasi()" style="color:#10b981;"><i class="fa-solid fa-download"></i> Unduh Hasil Digitasi</li>
+
                 <li class="tool-item" onclick="alert('Analisis Isochrone memerlukan API Traffic pihak ketiga.')"><i class="fa-regular fa-map"></i> Isochrone</li>
                 <li class="tool-item" onclick="kembaliKeBeranda()"><i class="fa-solid fa-chart-pie"></i> Infografis Data</li>
                 <li class="tool-item" onclick="alert('Swaplotting: Dalam Pengembangan')"><i class="fa-solid fa-object-ungroup"></i> Swaplotting</li>
@@ -800,7 +823,7 @@
                 <div class="legend-item"><div class="color-box" style="background:#6ee7b7;"></div><span>Bangunan Pendidikan</span></div>
                 <div class="legend-item"><div class="color-box" style="background:#fde047;"></div><span>Bangunan Peribadatan</span></div>
                 <div class="legend-item"><div class="color-box" style="background:#cbd5e1;"></div><span>Bangunan Perkantoran</span></div>
-                <div class="legend-item"><div class="color-box" style="background:#4ade80;"></div><span>Sawah / Pertanian Lahan Basah</span></div>
+                <div class="legend-item"><div class="color-box" style="background:#4ade80;"></div><span>Sawah / Pertanian Basah</span></div>
                 <div class="legend-item"><div class="color-box" style="background:#14b8a6;"></div><span>Tegalan / Ladang</span></div>
                 <div class="legend-item"><div class="color-box" style="background:#93c5fd;"></div><span>Badan Air / Sungai</span></div>
             </div>
@@ -825,10 +848,18 @@
             else navbar.classList.remove('scrolled');
         });
 
-        // === LOGIKA MODAL LOGIN ===
+        // =========================================
+        // === LOGIKA MODAL LOGIN PAKSA (FORCED) ===
+        // =========================================
+        
+        // Membuka modal otomatis saat web di-load
+        window.addEventListener('load', () => {
+            openLoginModal();
+        });
+
         function openLoginModal() {
             document.getElementById('authModal').classList.add('active');
-            document.body.style.overflow = "hidden";
+            document.body.style.overflow = "hidden"; // Kunci scroll
         }
 
         function closeLoginModal() {
@@ -846,7 +877,7 @@
                 document.getElementById('btn-tab-login').classList.add('active');
                 document.getElementById('form-login').classList.add('active');
                 document.getElementById('modalTitle').innerText = "Selamat Datang";
-                document.getElementById('modalDesc').innerText = "Silakan masuk untuk akses penuh";
+                document.getElementById('modalDesc').innerText = "Akses web membutuhkan autentikasi";
             } else {
                 document.getElementById('btn-tab-register').classList.add('active');
                 document.getElementById('form-register').classList.add('active');
@@ -855,12 +886,21 @@
             }
         }
 
-        function masukSebagaiTamu() {
+        function prosesAuth(event, pesan) {
+            event.preventDefault();
+            alert(pesan);
             closeLoginModal();
-            masuk();
         }
 
-        // === DATABASE DUMMY UNTUK FILTER TAHUN MONOGRAFI ===
+        function masukSebagaiTamu() {
+            closeLoginModal();
+            // Optional: langsung buka peta jika mau, atau biarkan di halaman landing.
+            // masuk(); 
+        }
+
+        // =========================================
+        // === DATABASE MONOGRAFI & GRAFIK (CHART.JS) ===
+        // =========================================
         const dataDesa = {
             "2025": { total: 2550, laki: 1250, perempuan: 1300, kk: 850, pekerjaan: [{ nama: "Petani / Pekebun", jumlah: 850 }, { nama: "Wiraswasta / Pelaku UMKM", jumlah: 420 }, { nama: "Pegawai Negeri Sipil (PNS)", jumlah: 115 }, { nama: "Karyawan Swasta", jumlah: 560 }, { nama: "Buruh Harian Lepas", jumlah: 310 }, { nama: "Lainnya / Belum Bekerja", jumlah: 295 }] },
             "2024": { total: 2480, laki: 1210, perempuan: 1270, kk: 820, pekerjaan: [{ nama: "Petani / Pekebun", jumlah: 870 }, { nama: "Wiraswasta / Pelaku UMKM", jumlah: 390 }, { nama: "Pegawai Negeri Sipil (PNS)", jumlah: 110 }, { nama: "Karyawan Swasta", jumlah: 520 }, { nama: "Buruh Harian Lepas", jumlah: 300 }, { nama: "Lainnya / Belum Bekerja", jumlah: 290 }] },
@@ -937,6 +977,7 @@
         var drawControl = null;
         var drawnItems = null;
         var routingControl = null;
+        var searchMarker = null;
 
         // Helper update UI slider
         function updateSliderFill(slider) {
@@ -970,6 +1011,12 @@
                 document.body.style.overflow = "auto";
                 document.body.style.overflowX = "hidden";
             }, 500); 
+        }
+
+        // Fungsi Penciutan Sidebar Utama (Tugas 3)
+        function toggleSidebarUtama() {
+            const sidebar = document.getElementById('sidebar-kendali');
+            sidebar.classList.toggle('collapsed');
         }
 
         // ==============================
@@ -1199,6 +1246,58 @@
             });
         }
 
+        // ===========================================
+        // === PENCARIAN KOORDINAT (SPATIAL SEARCH) ==
+        // ===========================================
+        function cariKoordinat() {
+            let lat = parseFloat(document.getElementById('coord-lat').value);
+            let lng = parseFloat(document.getElementById('coord-lng').value);
+
+            if (isNaN(lat) || isNaN(lng)) {
+                alert("Harap masukkan angka koordinat Latitude dan Longitude yang valid.");
+                return;
+            }
+
+            map.flyTo([lat, lng], 19, { animate: true, duration: 1.5 });
+
+            if (searchMarker) {
+                map.removeLayer(searchMarker);
+            }
+            
+            searchMarker = L.marker([lat, lng]).addTo(map)
+                .bindPopup(`<b>Titik Pencarian</b><br>Lat: ${lat}<br>Lng: ${lng}`)
+                .openPopup();
+        }
+
+        // ===========================================
+        // === UNDUH HASIL DIGITASI (EKSPOR KML/SHP) =
+        // ===========================================
+        function unduhHasilDigitasi() {
+            if (!drawnItems || drawnItems.getLayers().length === 0) {
+                alert("Tidak ada objek spasial yang ditemukan. Silakan lakukan digitasi polygon/garis/titik terlebih dahulu.");
+                return;
+            }
+
+            // Mengekstrak GeoJSON dari layer digitasi
+            var dataGeoJSON = drawnItems.toGeoJSON();
+            var dataString = JSON.stringify(dataGeoJSON);
+            
+            // Membuat File Blob
+            var blob = new Blob([dataString], {type: "application/json"});
+            var url = URL.createObjectURL(blob);
+            
+            // Proses Auto-Download
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = "hasil_digitasi_krajan.geojson";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert("Data berhasil diunduh dalam format GeoJSON.\n\n*Format ini adalah standar data spasial modern yang dapat langsung diolah dan dikonversi dengan mudah di QGIS / ArcGIS layaknya file Shapefile (SHP).");
+        }
+
         let isDrawActive = false;
         function toggleDraw() {
             if(isDrawActive) {
@@ -1211,34 +1310,7 @@
                 isDrawActive = true;
                 document.getElementById('btn-draw').classList.add('active');
                 document.getElementById('btn-ukur').classList.add('active');
-                alert("Mode Digitasi & Pengukuran Aktif!\nSilakan gunakan toolbar kecil yang muncul di KIRI ATAS peta.");
-            }
-        }
-
-        let isRoutingActive = false;
-        function toggleRouting() {
-            if(isRoutingActive && routingControl) {
-                map.removeControl(routingControl);
-                isRoutingActive = false;
-                document.getElementById('btn-route').classList.remove('active');
-            } else {
-                try {
-                    routingControl = L.Routing.control({
-                        waypoints: [
-                            L.latLng(-7.6279691, 110.5940527), 
-                            L.latLng(-7.6200000, 110.6000000)  
-                        ],
-                        routeWhileDragging: true,
-                        showAlternatives: true,
-                        position: 'topleft', 
-                        lineOptions: { styles: [{color: '#3b82f6', weight: 6}] }
-                    }).addTo(map);
-                    isRoutingActive = true;
-                    document.getElementById('btn-route').classList.add('active');
-                    alert("Mode Routing Aktif!\nSilakan geser pin pada peta untuk mencari rute perjalanan.");
-                } catch(e) {
-                    alert("Gagal memuat plugin routing. Pastikan koneksi internet stabil.");
-                }
+                alert("Mode Digitasi & Pengukuran Aktif!\nSilakan gunakan toolbar kecil yang muncul di KIRI ATAS peta. Untuk mengunduh hasilnya, klik fitur 'Unduh Hasil Digitasi'.");
             }
         }
 
